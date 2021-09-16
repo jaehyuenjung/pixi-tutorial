@@ -2,6 +2,10 @@ import { Visual } from "./visual.js";
 
 class App {
     constructor() {
+        this.unifrom = {
+            threshold: 0.5,
+            time: 0.0,
+        };
         this.setWebgl();
 
         WebFont.load({
@@ -47,30 +51,21 @@ class App {
             varying vec2 vTextureCoord;
             uniform sampler2D uSampler;
             uniform float threshold;
-            uniform float mr;
-            uniform float mg;
-            uniform float mb;
+            uniform float time;
+
             void main(void){
                 vec4 color = texture2D(uSampler, vTextureCoord);
-                vec3 mcolor = vec3(mr, mg, mb);
-                if(color.a < threshold){
-                    gl_FragColor = vec4(mcolor, 1.0);
+                if(color.a > threshold){
+                    gl_FragColor = vec4(vTextureCoord, abs(sin(time)), 1.0);
                 }else{
                     gl_FragColor = vec4(vec3(0.0), 0.0);
                 }
             }
         `;
 
-        const uniformData = {
-            threshold: 0.5,
-            mr: 0.0 / 255.0,
-            mg: 0.0 / 255.0,
-            mb: 0.0 / 255.0,
-        };
-
-        // const thresholdFilter = new PIXI.Filter(null, fragSource, uniformData);
-        // this.stage.filters = [blurFilter, thresholdFilter];
-        // this.stage.filterArea = this.renderer.screen;
+        const thresholdFilter = new PIXI.Filter(null, fragSource, this.unifrom);
+        this.stage.filters = [blurFilter, thresholdFilter];
+        this.stage.filterArea = this.renderer.screen;
     }
 
     resize() {
@@ -82,10 +77,12 @@ class App {
         this.visual.show(this.stageWidth, this.stageHeight, this.stage);
     }
 
-    animate(t) {
+    animate(f) {
         requestAnimationFrame(this.animate.bind(this));
+        this.unifrom.time += 0.01;
 
         this.visual.animate();
+
         this.renderer.render(this.stage);
     }
 }

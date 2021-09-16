@@ -23,7 +23,7 @@ export class Visual {
             stage.removeChild(this.container);
         }
 
-        this.pos = this.text.setText("A", 2, stageWidth, stageHeight);
+        this.pos = this.text.setText("T", 2, stageWidth, stageHeight);
 
         this.container = new PIXI.ParticleContainer(this.pos.length, {
             vertices: false,
@@ -33,6 +33,7 @@ export class Visual {
             uvs: false,
             tint: false,
         });
+
         stage.addChild(this.container);
 
         this.particles = [];
@@ -59,6 +60,7 @@ export class Visual {
                 const ay = ty - this.mouse.y;
                 item.vx -= ax;
                 item.vy -= ay;
+                // item.collide();
             }
 
             item.draw();
